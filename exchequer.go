@@ -135,3 +135,30 @@ func Array(i I, paths ...interface{}) (A, error) {
 
 	return nil, NewTypeCastIsntValid(i, "array")
 }
+
+type Q struct {
+	i I
+}
+
+func New(i I) *Q {
+	return &Q{i}
+}
+
+func (q *Q) String(paths ...interface{}) (string, error) {
+	return String(q.i, paths...)
+}
+func (q *Q) Int(paths ...interface{}) (int, error) {
+	return Int(q.i, paths...)
+}
+func (q *Q) Bool(paths ...interface{}) (bool, error) {
+	return Bool(q.i, paths...)
+}
+func (q *Q) Float(paths ...interface{}) (float64, error) {
+	return Float(q.i, paths...)
+}
+func (q *Q) Map(paths ...interface{}) (M, error) {
+	return Map(q.i, paths...)
+}
+func (q *Q) Array(paths ...interface{}) (A, error) {
+	return Array(q.i, paths...)
+}
