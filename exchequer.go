@@ -58,6 +58,49 @@ func Get(i I, paths ...interface{}) (interface{}, error) {
 	return i, nil
 }
 
+func Set(i I, value interface{}, paths ...interface{}) error {
+	for j, path := range paths {
+		if s, ok := path.(string); ok {
+			if m, ok := i.(map[string]interface{}); ok {
+				if j < len(paths)-1 {
+					if _, ok = m[s]; !ok {
+						m[s] = make(map[string]interface{})
+					}
+					i = m[s]
+					continue
+				} else {
+					m[s] = value
+					return nil
+				}
+			} else {
+				return NewPathDoesntExist(path)
+			}
+		}
+		if x, ok := path.(int); ok {
+			if a, ok := i.([]interface{}); ok {
+				if x < 0 {
+					x = len(a) + x
+				}
+
+				if x < 0 || x >= len(a) {
+					return NewPathDoesntExist(path)
+				} else {
+					if j < len(paths)-1 {
+						i = a[x]
+						continue
+					} else {
+						a[x] = value
+						return nil
+					}
+				}
+			} else {
+				return NewPathDoesntExist(path)
+			}
+		}
+	}
+	return nil
+}
+
 func String(i I, paths ...interface{}) (string, error) {
 	i, err := Get(i, paths...)
 	if err != nil {
@@ -161,4 +204,7 @@ func (q *Q) Map(paths ...interface{}) (M, error) {
 }
 func (q *Q) Array(paths ...interface{}) (A, error) {
 	return Array(q.i, paths...)
+}
+func (q *Q) Set(value interface{}, paths ...interface{}) error {
+	return Set(q.i, value, paths...)
 }

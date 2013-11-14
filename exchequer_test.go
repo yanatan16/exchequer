@@ -8,15 +8,15 @@ var testobj interface{} = map[string]interface{}{
 	"foo": "bar",
 	"baz": 123,
 	"mux": map[string]interface{}{
-		"flux": "capaciter",
+		"flux":     "capaciter",
 		"marry-me": false,
 		"fifty": map[string]interface{}{
-			"cents": []interface{}{1,2,3,4,5,6,7,8,9,10},
+			"cents": []interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
 		},
 	},
 	"shifty": map[string]interface{}{
-		"one": 1,
-		"two": 2,
+		"one":  1,
+		"two":  2,
 		"five": 5.55,
 	},
 }
@@ -58,7 +58,7 @@ func TestArray(t *testing.T) {
 		t.Error(err)
 	} else {
 		for i, x := range arr {
-			if x != i + 1 {
+			if x != i+1 {
 				t.Error("mux.fifty.cents != range(1,11)", arr)
 				break
 			}
@@ -75,7 +75,6 @@ func TestMap(t *testing.T) {
 		}
 	}
 }
-
 
 func TestObjectString(t *testing.T) {
 	q := New(testobj)
@@ -119,7 +118,7 @@ func TestObjectArray(t *testing.T) {
 		t.Error(err)
 	} else {
 		for i, x := range arr {
-			if x != i + 1 {
+			if x != i+1 {
 				t.Error("mux.fifty.cents != range(1,11)", arr)
 				break
 			}
@@ -135,5 +134,22 @@ func TestObjectMap(t *testing.T) {
 		if len(obj) != 3 || obj["one"] != 1 || obj["two"] != 2 || obj["five"] != 5.55 {
 			t.Error("shifty != map[one:1...]", obj)
 		}
+	}
+}
+
+func TestSet(t *testing.T) {
+	i := I(testobj)
+	Set(i, "herro", "hello", "konichiwa", "mygod")
+	if v, err := String(i, "hello", "konichiwa", "mygod"); err != nil {
+		t.Error(err)
+	} else if v != "herro" {
+		t.Error("v isn't herro " + v)
+	}
+
+	Set(i, 10, "mux", "fifty", "cents", 0)
+	if vi, ierr := Int(i, "mux", "fifty", "cents", 0); ierr != nil {
+		t.Error(ierr)
+	} else if vi != 10 {
+		t.Error("vi isn't 10 " + string(vi))
 	}
 }
