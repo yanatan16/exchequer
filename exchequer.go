@@ -2,6 +2,7 @@ package exchequer
 
 import (
 	"fmt"
+	"reflect"
 )
 
 type I interface{}
@@ -16,7 +17,7 @@ func NewPathDoesntExist(x interface{}) PathDoesntExist {
 }
 
 func NewTypeCastIsntValid(x interface{}, cast string) TypeCastIsntValid {
-	return TypeCastIsntValid(fmt.Sprintf("%v to %s", x, cast))
+	return TypeCastIsntValid(fmt.Sprintf("%v to %s (it is %v)", x, cast, reflect.TypeOf(x)))
 }
 
 func (path PathDoesntExist) Error() string {
