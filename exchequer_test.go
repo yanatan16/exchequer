@@ -2,6 +2,7 @@ package exchequer
 
 import (
 	"testing"
+	"reflect"
 )
 
 var testobj interface{} = map[string]interface{}{
@@ -151,5 +152,24 @@ func TestSet(t *testing.T) {
 		t.Error(ierr)
 	} else if vi != 10 {
 		t.Error("vi isn't 10 " + string(vi))
+	}
+}
+
+func TestQ(t *testing.T) {
+	q := New(testobj)
+	if q2, err := q.Q("mux"); err != nil {
+		t.Error(err)
+	} else {
+		if v, err := q2.Get("flux"); err != nil {
+			t.Error(err)
+		} else if v != "capaciter" {
+			t.Error("v is not capaciter", v)
+		}
+	}
+}
+
+func TestI(t *testing.T) {
+	if !reflect.DeepEqual(New(testobj).I(), testobj) {
+		t.Error("testobj.I isn't testobj ?")
 	}
 }

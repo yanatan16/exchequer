@@ -191,7 +191,11 @@ func (q *Q) I() interface{} {
 	return q.i
 }
 func (q *Q) Q(paths ...interface{}) (*Q, error) {
-	return New(Get(q.i, paths...))
+	if i, err := Get(q.i, paths...); err != nil {
+		return nil, err
+	} else {
+		return New(i), nil
+	}
 }
 func (q *Q) Get(paths ...interface{}) (interface{}, error) {
 	return Get(q.i, paths...)
