@@ -187,6 +187,12 @@ func New(i I) *Q {
 	return &Q{i}
 }
 
+func (q *Q) I() interface{} {
+	return q.i
+}
+func (q *Q) Get(paths ...interface{}) (interface{}, error) {
+	return Get(q.i, paths...)
+}
 func (q *Q) String(paths ...interface{}) (string, error) {
 	return String(q.i, paths...)
 }
