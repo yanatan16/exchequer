@@ -1,6 +1,6 @@
 # exchequer [![Build Status][1]][2]
 
-A `map[string]interface{}` query utility belt. I didn't like many of the [other](https://github.com/jmoiron/jsonq) [query](http://godoc.org/github.com/bitly/go-simplejson) libraries for arbitrary objects in Go, so I made my own. Specifically, I wanted one-liner capability with reflection of array index or map key without tying it directly to JSON.
+A `map[string]interface{}` query utility belt. I didn't like many of the [other](https://github.com/jmoiron/jsonq) [query](http://godoc.org/github.com/bitly/go-simplejson) libraries for arbitrary objects in Go, so I made my own. Specifically, I wanted one-liner capability with reflection of array index or map key without tying it directly to JSON. Its really easy to use and follows idiomatic Go.
 
 ## Documentation
 
@@ -58,22 +58,38 @@ With exchequer, you can make this much easier:
 import exq "exchequer"
 
 // obj.foo as string
-exq.String(obj, "foo")
+foo, err := exq.String(obj, "foo")
 
 // obj.baz as int
-exq.Int(obj, "baz")
+baz, err := exq.Int(obj, "baz")
 
 // obj.mux.fifty.cents[5] as int
-exq.Int(obj, "mux", "fifty", "cents", 5)
+arrayVal, err := exq.Int(obj, "mux", "fifty", "cents", 5)
 
 // Create a query-able object
 q := exq.New(obj)
 
 // obj.shifty as a map
-q.Map("shifty")
+m, err := q.Map("shifty")
 
 // obj.mux["marry-me"] as bool
-q.Bool("mux", "marry-me")
+marry, err := q.Bool("mux", "marry-me")
+
+// Set something in the object
+err = q.Set(false, "mux", "marry-me")
+
+// It can create new arbitrary maps in the underlying object
+err = q.Set("deep-value", "a", "new", "structure")
+
+// We can even create prefix queries to exploit modularity
+prefixed_q := q.Prefix("shifty")
+prefixed_q2 := New(obj, "shifty")
+
+// Now use the prefixed queue
+one, err := prefixed_q.Get("one") // shifty.one
+
+// After using the query, we can get the underlying object
+underlying_object := q.I()
 ```
 
 ## License
