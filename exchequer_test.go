@@ -138,6 +138,28 @@ func TestObjectMap(t *testing.T) {
 	}
 }
 
+func TestPrefix(t *testing.T) {
+	q := New(testobj, "mux", "fifty")
+
+	if i, err := q.Int("cents", 5); err != nil {
+		t.Error(err)
+	} else if i != 6 {
+		t.Error("prefix mux.fifty Int cents.5 != 6", i)
+	}
+
+	pq := q.Prefix("cents")
+	if arr, err := pq.Array(); err != nil {
+		t.Error(err)
+	} else {
+		for i, x := range arr {
+			if x != i+1 {
+				t.Error("prefix mux.fifity.cents Array() != range(1,11)", arr)
+				break
+			}
+		}
+	}
+}
+
 func TestSet(t *testing.T) {
 	i := I(testobj)
 	Set(i, "herro", "hello", "konichiwa", "mygod")

@@ -13,7 +13,7 @@ type PathDoesntExist string
 type TypeCastIsntValid string
 
 func NewPathDoesntExist(x interface{}) PathDoesntExist {
-	return PathDoesntExist(fmt.Sprintf("%s", x))
+	return PathDoesntExist(fmt.Sprintf("%v", x))
 }
 
 func NewTypeCastIsntValid(x interface{}, cast string) TypeCastIsntValid {
@@ -182,43 +182,46 @@ func Array(i I, paths ...interface{}) (A, error) {
 
 type Q struct {
 	i I
+	prefix []interface{}
 }
 
-func New(i I) *Q {
-	return &Q{i}
+func New(i I, prefix_paths...interface{}) *Q {
+	return &Q{i, prefix_paths}
 }
-
+func (q *Q) Prefix(paths ...interface{}) *Q {
+	return New(q.i, append(q.prefix, paths...)...)
+}
 func (q *Q) I() interface{} {
 	return q.i
 }
 func (q *Q) Q(paths ...interface{}) (*Q, error) {
-	if i, err := Get(q.i, paths...); err != nil {
+	if i, err := Get(q.i, append(q.prefix, paths...)...); err != nil {
 		return nil, err
 	} else {
 		return New(i), nil
 	}
 }
 func (q *Q) Get(paths ...interface{}) (interface{}, error) {
-	return Get(q.i, paths...)
+	return Get(q.i, append(q.prefix, paths...)...)
 }
 func (q *Q) String(paths ...interface{}) (string, error) {
-	return String(q.i, paths...)
+	return String(q.i, append(q.prefix, paths...)...)
 }
 func (q *Q) Int(paths ...interface{}) (int, error) {
-	return Int(q.i, paths...)
+	return Int(q.i, append(q.prefix, paths...)...)
 }
 func (q *Q) Bool(paths ...interface{}) (bool, error) {
-	return Bool(q.i, paths...)
+	return Bool(q.i, append(q.prefix, paths...)...)
 }
 func (q *Q) Float(paths ...interface{}) (float64, error) {
-	return Float(q.i, paths...)
+	return Float(q.i, append(q.prefix, paths...)...)
 }
 func (q *Q) Map(paths ...interface{}) (M, error) {
-	return Map(q.i, paths...)
+	return Map(q.i, append(q.prefix, paths...)...)
 }
 func (q *Q) Array(paths ...interface{}) (A, error) {
-	return Array(q.i, paths...)
+	return Array(q.i, append(q.prefix, paths...)...)
 }
 func (q *Q) Set(value interface{}, paths ...interface{}) error {
-	return Set(q.i, value, paths...)
+	return Set(q.i, value, append(q.prefix, paths...)...)
 }
