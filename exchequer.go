@@ -3,7 +3,6 @@ package exchequer
 import (
 	"fmt"
 	"reflect"
-	"labix.org/v2/mgo/bson"
 )
 
 type I interface{}
@@ -29,21 +28,50 @@ func (typ TypeCastIsntValid) Error() string {
 	return "Type-cast isn't valid: " + string(typ)
 }
 
+
+var mapType reflect.Type = reflect.TypeOf(map[string]interface{}{})
+func convertToMap(i interface{}) (map[string]interface{}, bool) {
+	// See if it is a map first
+	if m, ok := i.(map[string]interface{}); ok {
+		return m, true
+	}
+
+	// Now try converting it
+	v := reflect.ValueOf(i)
+	if v.Type().ConvertibleTo(mapType) {
+		return v.Convert(mapType).Interface().(map[string]interface{}), true
+	}
+
+	return nil, false
+}
+
+var arrayType reflect.Type = reflect.TypeOf([]interface{}{})
+func convertToArray(i interface{}) ([]interface{}, bool) {
+	// See if it is an array first
+	if a, ok := i.([]interface{}); ok {
+		return a, true
+	}
+
+	// Now try converting it
+	v := reflect.ValueOf(i)
+	if v.Type().ConvertibleTo(arrayType) {
+		return v.Convert(arrayType).Interface().([]interface{}), true
+	}
+
+	return nil, false
+}
+
 func Get(i I, paths ...interface{}) (interface{}, error) {
 	for _, path := range paths {
 		if s, ok := path.(string); ok {
-			if m, ok := i.(map[string]interface{}); ok {
-				i = m[s]
-				continue
-			}
-			if m, ok := i.(bson.M); ok {
+			if m, ok := convertToMap(i); ok {
 				i = m[s]
 				continue
 			}
 			return nil, NewPathDoesntExist(path)
 		}
 		if x, ok := path.(int); ok {
-			if a, ok := i.([]interface{}); ok {
+			if a, ok := convertToArray(i); ok {
 				if x < 0 {
 					x = len(a) + x
 				}
@@ -66,28 +94,23 @@ func Get(i I, paths ...interface{}) (interface{}, error) {
 func Set(i I, value interface{}, paths ...interface{}) error {
 	for j, path := range paths {
 		if s, ok := path.(string); ok {
-			m, ok := i.(map[string]interface{})
-			if !ok {
-				if b, ok := i.(bson.M); ok {
-					m = map[string]interface{}(b)
+			if m, ok := convertToMap(i); ok {
+				if j < len(paths)-1 {
+					if _, ok = m[s]; !ok {
+						m[s] = make(map[string]interface{})
+					}
+					i = m[s]
+					continue
 				} else {
-					return NewPathDoesntExist(path)
+					m[s] = value
+					return nil
 				}
-			}
-
-			if j < len(paths)-1 {
-				if _, ok = m[s]; !ok {
-					m[s] = make(map[string]interface{})
-				}
-				i = m[s]
-				continue
 			} else {
-				m[s] = value
-				return nil
+				return NewPathDoesntExist(path)
 			}
 		}
 		if x, ok := path.(int); ok {
-			if a, ok := i.([]interface{}); ok {
+			if a, ok := convertToArray(i); ok {
 				if x < 0 {
 					x = len(a) + x
 				}

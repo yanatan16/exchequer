@@ -11,7 +11,7 @@ var testobj interface{} = map[string]interface{}{
 	"mux": map[string]interface{}{
 		"flux":     "capaciter",
 		"marry-me": false,
-		"fifty": map[string]interface{}{
+		"fifty": M{ // Using an alternative type requires reflect usage to convert
 			"cents": []interface{}{1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
 		},
 	},
