@@ -34,6 +34,8 @@ func convertToMap(i interface{}) (map[string]interface{}, bool) {
 	// See if it is a map first
 	if m, ok := i.(map[string]interface{}); ok {
 		return m, true
+	} else if i == nil {
+		return nil, false
 	}
 
 	// Now try converting it
@@ -50,6 +52,8 @@ func convertToArray(i interface{}) ([]interface{}, bool) {
 	// See if it is an array first
 	if a, ok := i.([]interface{}); ok {
 		return a, true
+	} else if i == nil {
+		return nil, false
 	}
 
 	// Now try converting it
