@@ -192,7 +192,7 @@ func Map(i I, paths ...interface{}) (M, error) {
 		return nil, err
 	}
 
-	if s, ok := i.(map[string]interface{}); ok {
+	if s, ok := convertToMap(i); ok {
 		return M(s), nil
 	}
 
@@ -205,7 +205,7 @@ func Array(i I, paths ...interface{}) (A, error) {
 		return nil, err
 	}
 
-	if s, ok := i.([]interface{}); ok {
+	if s, ok := convertToArray(i); ok {
 		return A(s), nil
 	}
 

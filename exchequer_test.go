@@ -138,6 +138,13 @@ func TestObjectMap(t *testing.T) {
 	}
 }
 
+func TestObjectMapAlias(t *testing.T) {
+	q := New(testobj)
+	if _, err := q.Map("mux","fifty"); err != nil {
+		t.Error(err)
+	}
+}
+
 func TestPrefix(t *testing.T) {
 	q := New(testobj, "mux", "fifty")
 
