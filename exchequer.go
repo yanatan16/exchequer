@@ -227,6 +227,9 @@ func New(i I, prefix_paths...interface{}) *Q {
 func (q *Q) Prefix(paths ...interface{}) *Q {
 	return New(q.i, append(q.prefix, paths...)...)
 }
+func (q *Q) Unprefix() *Q {
+	return New(q.i)
+}
 func (q *Q) I() interface{} {
 	return q.i
 }
